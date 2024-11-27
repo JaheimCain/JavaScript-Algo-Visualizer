@@ -13,13 +13,13 @@ function linear_search(array, target){{
 
 //Binary Search loops through array to find a value in O(log(n)) time
 function binary_search(array, target) {
-    let i = 0;
+    let l = 0;
     let r = array.length -1;
 
 
     while (l < r){
-        m = (l+r)/2;
-        m_val = array[m];
+        let m = (l+r)/2;
+        let m_val = array[m];
 //less than case
         if (m_val < target) l = m + 1;
 //greater than case
@@ -44,12 +44,12 @@ function interpolationSearch(array, target){
     while(target >= array[low] && target <= array[high] && low<=high){
   
       //formula to calculate were our target is most likely at
-      let probe =(high-low)*(value-array[low])/ (array[high]-array[low]);
+      let probe =(high-low)*(target-array[low])/ (array[high]-array[low]);
   
       //checking to see if probe is our target value
-      if(array[probe]==value){
+      if(array[probe]===target){
         return probe;
-      }else if(array[probe]<value){
+      }else if(array[probe]<target){
         low =probe+1;
       }else{
         high=probe-1;
@@ -58,7 +58,7 @@ function interpolationSearch(array, target){
   }
 
 //Selection Sort  O(n^2) uses the minimus value to swap with array[i]
-function selection_sort(array){
+export const SelectionSort = (array) =>{
 for (let i = 0; i < array.length; i++){
     let min = i;
     for (let j = i + 1; j < array.length; j++){
@@ -73,10 +73,12 @@ for (let i = 0; i < array.length; i++){
 
     
 }
+return array;
+
 }
 
 // Insertion Sort O (n^2) checks all values to the left of the index and switches them if larger
-function insertion_sort (array){
+export const InsertionSort = (array) =>{
     for (let i = 1; i < array.length; i++) {
 		let temp = array[i];
 		let j = i-1;
@@ -89,43 +91,30 @@ function insertion_sort (array){
 		
 				
 	}
+  return array;
+
 }
 
 //Quick Sort recursive O(n*log(n)) uses pivot and compares the values befor the pivot breaking at it after each step
-function quick_sort(array, start, end){
-if (end <= start) return; //base case
+export const quick_sort = (array) =>{
+if (array.length <= 1) return array; //base case
 
-let pivot = partition(array, start, end)
-quick_sort(array, start, pivot -1);
-quick_sort(array, pivot + 1, end);
+const pivot = array[0];
+const left = [];
+const right = [];
 
+for (let i = 1; i < array.length; i++){
+  if (array[i] < pivot) { 
+    left.push(array[i]);
+  }
+  else{
+    right.push(array[i]);
+  }
+}
 
-    }
+return[...quick_sort(left), pivot, ...quick_sort(right)];
 
-    function partition(array, start, end){
-       
-       let pivot = array[end];
-       let i = start - 1;
-
-
-       for (let j = start; j <= end - 1; j++){
-        if (array[j] < pivot){
-            i++;
-            let temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
-
-        }
-       }
-       i++;
-       let temp = array[i];
-            array[i] = array[end];
-            array[end] = temp;
-
-        return i;
-
-
-    }
+}
 
 
 //HashMap is a powerful data structure used to store items in a key value pair ( best case a look up on a hashmap is O(1) but can loop through like an array)
@@ -134,7 +123,7 @@ quick_sort(array, pivot + 1, end);
 
     }
 
-    function HashMap(key, value){
+    function HashMapNew (key, value){
 
         const map_instance = new Map();
         map_instance.set(key,value);
@@ -155,11 +144,13 @@ quick_sort(array, pivot + 1, end);
     }
 
     //bubble sort O(n^2) adjacent elements are compared and swapped if not in order
-function bubbleSort(array, n){
+    export const bubbleSort = (array) =>{
     let temp = 0;
+    const n = array.length;
+
   
     for (let  i = 0; i < n -1; i++ ){
-      for (let j = 0; j < n - i; j++){
+      for (let j = 0; j < n - i - 1; j++){
         if (array[j] > array[j + 1]){
   
           temp = array[j];
@@ -169,31 +160,82 @@ function bubbleSort(array, n){
         }
       }
     }
+
+    return array;
   }
 
   //MergeSort recursion O(n * log(n)) A divide and conquer algorithm used for sorting uses a helper merge method
-function MergeSort(array){
-    //base case if array cannot be /2
-    if (array.length<2){
-      return array;
-    }
-    //finding the  middle of the array and diving it ito two
-    const mid = Math.floor(array.length/2);
-    const leftArray = array.slice(0,mid);
-    const rightArray = array.slice(mid);
-    //passing created arrays into helper function
-    return merge(MergeSort(leftArray), MergeSort(rightArray))
+export function MergeSort(array) {
+
+  const animations = [];
+  if (array.length <= 1) return array;
+  const auxArray = array.slice();
+  mergeHelp(array, 0 , array.length - 1, auxArray, animations);
+  return animations;
+
   }
-  function merge(leftArray, rightArray){
-    //temporary array
-    const sortedArray = [];
-    //while our array is not empty we check for which array has the smallest element
-    while(leftArray.length && rightArray.length){
-      if(leftArray[0] <= rightArray[0]){
-        sortedArray.push(leftArray.shift())
-      }else{
-        sortedArray.push(rightArray.shift())
-      }
-    }
-    return [...sortedArray, ...leftArray, ...rightArray]
+  function mergeHelp(
+    mainArray,
+    start,
+    end,
+    auxArray,
+    animations
+  ){
+   if (start === end )return;
+   const mid = Math.floor((start + end) / 2);
+
+
+   mergeHelp(auxArray, start, mid, mainArray, animations);
+   mergeHelp(auxArray, mid + 1, end, mainArray, animations);
+   merge(mainArray, start, mid, end, auxArray, animations)
+  }
+
+  function merge(
+    mainArray,
+    start,
+    mid,
+    end,
+    auxArray,
+    animations
+  ){
+
+    let k = start;
+    let i = start;
+    let j = mid + 1;
+    
+while (i <= mid && j <= end ){
+
+  animations.push([i, j]);
+  animations.push([i, j])
+ 
+  if (auxArray[i] <= auxArray[j]){
+   animations.push([k, auxArray[i]]);
+    mainArray[k++] = auxArray[i++];
+
+  }else{
+    animations.push([k, auxArray[j]]);
+    mainArray[k++] = auxArray[j++];
+  }
+  
+
+}
+
+while ( i<= mid){
+  animations.push([i, i]);
+  animations.push([i, i]);
+
+  animations.push([k, auxArray[i]]);
+  mainArray[k++] = auxArray[i++];
+}
+while ( j<= end){
+  animations.push([j, j]);
+  animations.push([j, j]);
+
+  animations.push([k, auxArray[j]]);
+
+    mainArray[k++] = auxArray[j++];
+
+}
+
+
   }
